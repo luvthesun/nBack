@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>A Single N-Back Game -- by If</TITLE>
+<META content="text/html; charset=utf-8" http-equiv=Content-Type>
+
+<SCRIPT id=jquery type=text/javascript
+src="jquery-1.6.1.min.js"></SCRIPT>
+<SCRIPT id=jquery-ui type=text/javascript
+src="jquery-ui-1.8.1.min.js"></SCRIPT>
+
+<!--
+<SCRIPT id=jquery type=text/javascript
+src="Single N-Back/jquery-1.6.1.min.js"></SCRIPT>
+<SCRIPT id=jquery-ui type=text/javascript
+src="Single N-Back/jquery-ui-1.8.1.min.js"></SCRIPT>
+<SCRIPT id=jquery-ui type=text/javascript
+src="jquery-ui-1.8.1.min.js"></SCRIPT>
+<SCRIPT id=jquery-ui type=text/javascript
+src="jquery-ui-1.13.1.min.js"></SCRIPT>
+-->
+
+
+<STYLE type=text/css>
+
+body
+{
+	background: tan;
+}
+
+#content {
+  FONT-FAMILY: 'Book Antiqua', 'Palatino Linotype', Georgia, serif
+}
+#title {
+  TEXT-ALIGN: center
+}
+#title H1 {
+  FONT-SIZE: 24px; FONT-WEIGHT: bold
+}
+#content {
+  MARGIN: 0px auto; WIDTH: 320px
+}
+#game-field {
+  BORDER-BOTTOM: black 1px dashed; POSITION: relative; BORDER-LEFT: black 1px dashed; MARGIN: 8px auto; WIDTH: 256px; HEIGHT: 256px; BORDER-TOP: black 1px dashed; BORDER-RIGHT: black 1px dashed
+}
+#notifier {
+  POSITION: absolute; TEXT-ALIGN: center; WIDTH: 256; HEIGHT: 256px; FONT-SIZE: 20px; TOP: 0px; LEFT: 0px
+}
+#game-field TABLE * {
+  PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+}
+#game-field TABLE IMG {
+  MARGIN: 64px
+}
+#instruction {
+  TEXT-ALIGN: center; FONT-SIZE: 12px
+}
+#info {
+  TEXT-ALIGN: center; MARGIN: 0px auto; WIDTH: 300px; FONT-SIZE: 12px
+}
+#buttons {
+  TEXT-ALIGN: center
+}
+#button-start {
+  PADDING-BOTTOM: 8px; MARGIN: 8px; PADDING-LEFT: 8px; WIDTH: 100px; PADDING-RIGHT: 8px; FONT-WEIGHT: bold; PADDING-TOP: 8px
+}
+#button-yes {
+  PADDING-BOTTOM: 8px; MARGIN: 8px; PADDING-LEFT: 32px; PADDING-RIGHT: 32px; PADDING-TOP: 8px
+}
+#button-pause-toggle {
+  PADDING-BOTTOM: 8px; MARGIN: 8px; MARGIN-LEFT: 32px; PADDING-LEFT: 32px; PADDING-RIGHT: 32px; PADDING-TOP: 8px
+}
+#config {
+  BORDER-BOTTOM: #ccc 1px dashed; TEXT-ALIGN: center; BORDER-LEFT: #ccc 1px dashed; MARGIN: 8px; BORDER-TOP: #ccc 1px dashed; BORDER-RIGHT: #ccc 1px dashed
+}
+#text-n {
+  TEXT-ALIGN: center; WIDTH: 40px
+}
+#footer {
+  TEXT-ALIGN: center; MARGIN: 42px 0px 0px; FONT-SIZE: small
+}
+</STYLE>
+
+<!--
+last session:
+n=1, 4000/2000 -> ok
+n=2, 6000/2000 -> ok
+-->
+
+<SCRIPT type=text/javascript>
+var nback = {
+  interval: 7200,
+  showTime: 2000,
+  nImage: 9,
+  nRound: 30,
+  n:1, // default value
+  timer:null,
+  queue:[],
+  answers:[],
+  current: null,
+  nRight:0,
+  nWrong:0,
+
+  I_DONT_KNOW:0,
+  YES:1,
+  NO:2,
+  
+  //tyr
+  isPaused: false,
+  counter: 0,
+  
+
+  start:function(){
+    var text = $("#text-n").val();
+    var i,j,rightCount=0;
+    if (Number(text)>0) {
+      nback.n=Number(text);
+    }
+    if(nback.n>10) {
+      nback.n=10;
+    }
+    nback.queue = [];
+    for( i=0; i<nback.nRound+nback.n; ++i ) {
+      nback.queue.push( Math.ceil( Math.random()*nback.nImage ) );
+    }
+    for( i=nback.n; i<nback.queue.length; ++i ) {
+      if(nback.queue[i] == nback.queue[i-nback.n])
+        ++rightCount;
+    }
+    if (rightCount<10) {
+      for( i=rightCount; i<12; ++i ) {
+        j = Math.floor( Math.random() * nback.nRound );
+        if( nback.queue[j+nback.n] == nback.queue[j] ) {
+          --i;
+          continue;
+        } else {
+          nback.queue[j+nback.n] = nback.queue[j];
+        }
+      }
+    }
+    nback.answers = [];
+    for( i=0; i<nback.queue.length; ++i ) {
+      nback.answers.push( nback.I_DONT_KNOW );
+    }
+    nback.current = 0;
+    nback.nRight = 0;
+    nback.nWrong = 0;
+    $("#notifier").text("");
+    $("#button-start").hide();
+    $("#config").hide();
+    $("#n-back-n").text(nback.n.toString());
+    if(nback.timer) {
+      window.clearInterval(nback.timer);
+    }
+    nback.showImage(nback.queue[nback.current]);
+    window.setTimeout(nback.look, nback.interval);
+    $("#instruction").text("Look CAREFULLY!");
+    nback.updateInfo();
+  },
+
+  showImage:function(n) {
+    $("#img"+n).show();
+    window.setTimeout(function(){$("#img"+n).fadeOut();}, nback.showTime);
+
+	//tyr: reset pausetimer + update image counter
+	pausetimer.start();
+    nback.counter++;
+	$("#n-counter").text(nback.counter.toString());
+  },
+
+  look:function(){
+    if( nback.current+1<nback.n ) {
+      ++nback.current;
+    } else {
+      $("#instruction").text("Is this image the same one shown "+nback.n+" steps before?");
+      nback.timer = window.setInterval(nback.next, nback.interval);
+      $("#button-yes").show();
+      $("#button-yes").focus();
+      $("#button-pause-toggle").show();
+      nback.next();
+      return;
+    }
+    nback.showImage(nback.queue[nback.current]);
+    window.setTimeout(nback.look, nback.interval);
+  },
+
+  next:function(){
+    if(nback.current >= nback.n && nback.answers[nback.current] === nback.I_DONT_KNOW) {
+      nback.check(false);
+    }
+    if(nback.current+1 < nback.queue.length) {
+      ++nback.current;
+    } else {
+      window.setTimeout(nback.end, window.interval);
+      return;
+    }
+    nback.showImage(nback.queue[nback.current]);
+  },
+
+  check:function(ans){
+    if( nback.answers[nback.current] != nback.I_DONT_KNOW ) {
+      return;
+    } else {
+      nback.answers[nback.current] = ans? nback.YES : nback.NO;
+      var eq = nback.queue[nback.current] === nback.queue[nback.current-nback.n];
+      if (ans) {
+        if (eq === ans) {
+          ++nback.nRight;
+          nback.light("#0f0");
+        } else {
+          ++nback.nWrong;
+          nback.light("red");
+        }
+      } else if( eq ) {
+        ++nback.nWrong;
+        nback.light("red");
+      }
+      nback.updateInfo();
+    }
+  },
+
+  pauseToggle:function(state)
+  {
+  	//btn was clicked, so toggle current state
+  	nback.isPaused = !state;
+	
+	//User clicked PAUSE
+    if(nback.isPaused) 
+	{
+      pausetimer.pause();
+
+	  //Since timer is now paused, change btn text to "Resume"
+      $("#button-pause-toggle").prop('value', 'Resume');
+    } 
+	//User clicked RESUME
+	else 
+	{
+      pausetimer.resume();
+
+      //Since timer is NOT paused, change btn text to "Pause"
+      $("#button-pause-toggle").prop('value', 'Pause');
+    }
+    //keep focus on "Yes" btn
+    $("#button-yes").focus();
+  },
+
+  light:function(color) {
+    $("#notifier").css("background",color).effect("explode", {}, 600);
+  },
+
+  updateInfo:function(){
+    $("#n-back-n").text(nback.n.toString());
+
+    $("#n-right").text(nback.nRight.toString());
+    $("#n-wrong").text(nback.nWrong.toString());
+
+    var acc=nback.nRight+nback.nWrong == 0? 0 : (nback.nRight/(nback.nRight+nback.nWrong)*100);
+    $("#acc").text(acc.toFixed(2).toString());
+  },
+
+  end:function(){
+    window.clearInterval(nback.timer);
+    nback.timer=null;
+    nback.queue=[];
+    nback.answers=[];
+    nback.current=0;
+    var acc=nback.nRight+nback.nWrong == 0? 0 : (nback.nRight/(nback.nRight+nback.nWrong)*100);
+    $("#notifier").removeAttr("style").html(
+      "<br/><b>You are playing "+nback.n+" back</b><br/><br/>"+
+      "Correct: "+nback.nRight+"<br/>"+
+      "Incorrect: "+nback.nWrong+"<br/>"+
+      "Accuracy: "+acc.toFixed(2)+"%"+
+
+      (acc >= 60 ? "<br/><br/><b>Well Done!</b>" : "")
+    );
+    $("#instruction").text("Game Over");
+    $("#button-yes").hide();
+    $("#button-pause-toggle").hide();
+    $("#config").show();
+    $("#button-start").show();
+  }
+}
+
+$(function(){
+  $("#button-start").click(nback.start);
+  $("#button-yes").click(function(){nback.check(true)});
+  $("#button-pause-toggle").click(function(){nback.pauseToggle(nback.isPaused)});
+});
+
+//tyr: pause/resume countdown timer (created w SetInterval)
+//based on: https://stackoverflow.com/questions/3969475/javascript-pause-settimeout
+var PauseTimerControl =
+function(callback, interval)
+{
+//    var timerId, start, remaining = delay;
+    var timerId, start, remaining;
+
+	//start timer at beginning of each interval
+    this.start = function()
+	{
+        start     = Date.now();
+		remaining = interval;
+
+        timerId   = null;
+	}
+
+	//if user clicks "Pause"
+    this.pause = function()
+    {
+        window.clearInterval(nback.timer);
+        remaining = interval - (Date.now() - start);
+    };
+
+	//if user clicks "Resume"
+    this.resume = function()
+    {
+        timerId = window.setTimeout(callback, remaining);
+    };
+};
+
+//Callback func, called at expiration of countdown restarted after a pause
+function RestartInterval()
+{
+	nback.timer = window.setInterval(nback.next, nback.interval);
+	nback.next();
+}
+
+var pausetimer = new PauseTimerControl(RestartInterval, nback.interval);
+
+</SCRIPT>
+
+
+
+<META name=GENERATOR content="MSHTML 9.00.8112.16440"></HEAD>
+<BODY>
+<DIV id=content>
+<DIV id=title>
+<H1>A Single N-Back Game</H1>
+</DIV>
+<TABLE id=info>
+  <TBODY>
+  <TR>
+    <TD>&nbsp;&nbsp;</TD>
+    <TD>n=<SPAN id=n-back-n>1</SPAN></TD>
+    <TD>&nbsp;&nbsp;</TD>
+    <TD>Right: <SPAN id=n-right>0</SPAN></TD>
+    <TD>Wrong: <SPAN id=n-wrong>0</SPAN></TD>
+    <TD>Accuracy: <SPAN id=acc>0.00</SPAN>%</TD>
+    <TD>#Counter: <SPAN id=n-counter>0</SPAN></TD>
+ </TR>
+ </TBODY>
+</TABLE>
+<DIV id=game-field>
+<DIV id=notifier>
+  <div align="center"></div>
+</DIV>
+<TABLE cellSpacing=0 cellPadding=0>
+  <TBODY>
+  <TR>
+    <TD style="WIDTH: 256px; HEIGHT: 256px; VERTICAL-ALIGN: middle"
+      align=center><IMG style="DISPLAY: none" id=img1 src="img/1.png">
+      <IMG style="DISPLAY: none" id=img2 src="img/2.png"> <IMG
+      style="DISPLAY: none" id=img3 src="img/3.png"> <IMG
+      style="DISPLAY: none" id=img4 src="img/4.png"> <IMG
+      style="DISPLAY: none" id=img5 src="img/5.png"> <IMG
+      style="DISPLAY: none" id=img6 src="img/6.png"> <IMG
+      style="DISPLAY: none" id=img7 src="img/7.png"> <IMG
+      style="DISPLAY: none" id=img8 src="img/8.png"> <IMG
+      style="DISPLAY: none" id=img9 src="img/9.png">
+</TD></TR></TBODY></TABLE></DIV>
+<DIV id=instruction>Hi, There </DIV>
+<DIV id=buttons>
+	<INPUT id=button-start value=Start! type=button>
+	<INPUT style="DISPLAY: none" id=button-yes value=Yes! type=button>
+	<INPUT style="DISPLAY: none" id=button-pause-toggle value=Pause type=button>
+</DIV>
+</DIV>
+<DIV id=config>
+config: n=<INPUT id=text-n value=1> </DIV>
+<DIV id=footer>
+</A></SPAN></P>
