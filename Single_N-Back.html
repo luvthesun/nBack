@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width"><title>http://systemicthinkingcourse.com/Single%20N-Back.htm</title><link rel="stylesheet" type="text/css" href="resource://content-accessible/viewsource.css"></head><body id="viewsource" class="highlight" style="tab-size: 4"><pre id="line1"><span></span><span class="error doctype" title="Quirky doctype. Expected “&lt;!DOCTYPE html&gt;”.">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"&gt;</span><span>
+<span id="line2"></span></span><span>&lt;<span class="start-tag">HTML</span>&gt;</span><span></span><span>&lt;<span class="start-tag">HEAD</span>&gt;</span><span></span><span>&lt;<span class="start-tag">TITLE</span>&gt;</span><span>A Single N-Back Game -- by If</span><span>&lt;/<span class="end-tag">TITLE</span>&gt;</span><span>
+<span id="line3"></span></span><span>&lt;<span class="start-tag">META</span> <span class="attribute-name">content</span>="<a class="attribute-value">text/html; charset=utf-8</a>" <span class="attribute-name">http-equiv</span>=<a class="attribute-value">Content-Type</a>&gt;</span><span>
+<span id="line4"></span></span><span>&lt;<span class="start-tag">SCRIPT</span> <span class="attribute-name">id</span>=<a class="attribute-value">jquery</a> <span class="attribute-name">type</span>=<a class="attribute-value">text/javascript</a> 
+<span id="line5"></span><span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/jquery-1.6.1.min.js">Single N-Back/jquery-1.6.1.min.js</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">SCRIPT</span>&gt;</span><span>
+<span id="line6"></span>
+<span id="line7"></span></span><span>&lt;<span class="start-tag">SCRIPT</span> <span class="attribute-name">id</span>=<a class="attribute-value">jquery-ui</a> <span class="attribute-name">type</span>=<a class="attribute-value">text/javascript</a> 
+<span id="line8"></span><span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/jquery-ui-1.8.1.min.js">Single N-Back/jquery-ui-1.8.1.min.js</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">SCRIPT</span>&gt;</span><span>
+<span id="line9"></span>
+<span id="line10"></span></span><span>&lt;<span class="start-tag">STYLE</span> <span class="attribute-name">type</span>=<a class="attribute-value">text/css</a>&gt;</span><span>
+<span id="line11"></span>#content {
+<span id="line12"></span>	FONT-FAMILY: 'Book Antiqua', 'Palatino Linotype', Georgia, serif
+<span id="line13"></span>}
+<span id="line14"></span>#title {
+<span id="line15"></span>	TEXT-ALIGN: center
+<span id="line16"></span>}
+<span id="line17"></span>#title H1 {
+<span id="line18"></span>	FONT-SIZE: 24px; FONT-WEIGHT: bold
+<span id="line19"></span>}
+<span id="line20"></span>#content {
+<span id="line21"></span>	MARGIN: 0px auto; WIDTH: 320px
+<span id="line22"></span>}
+<span id="line23"></span>#game-field {
+<span id="line24"></span>	BORDER-BOTTOM: black 1px dashed; POSITION: relative; BORDER-LEFT: black 1px dashed; MARGIN: 8px auto; WIDTH: 256px; HEIGHT: 256px; BORDER-TOP: black 1px dashed; BORDER-RIGHT: black 1px dashed
+<span id="line25"></span>}
+<span id="line26"></span>#notifier {
+<span id="line27"></span>	POSITION: absolute; TEXT-ALIGN: center; WIDTH: 256; HEIGHT: 256px; FONT-SIZE: 20px; TOP: 0px; LEFT: 0px
+<span id="line28"></span>}
+<span id="line29"></span>#game-field TABLE * {
+<span id="line30"></span>	PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+<span id="line31"></span>}
+<span id="line32"></span>#game-field TABLE IMG {
+<span id="line33"></span>	MARGIN: 64px
+<span id="line34"></span>}
+<span id="line35"></span>#instruction {
+<span id="line36"></span>	TEXT-ALIGN: center; FONT-SIZE: 12px
+<span id="line37"></span>}
+<span id="line38"></span>#info {
+<span id="line39"></span>	TEXT-ALIGN: center; MARGIN: 0px auto; WIDTH: 300px; FONT-SIZE: 12px
+<span id="line40"></span>}
+<span id="line41"></span>#buttons {
+<span id="line42"></span>	TEXT-ALIGN: center
+<span id="line43"></span>}
+<span id="line44"></span>#button-start {
+<span id="line45"></span>	PADDING-BOTTOM: 8px; MARGIN: 8px; PADDING-LEFT: 8px; WIDTH: 100px; PADDING-RIGHT: 8px; FONT-WEIGHT: bold; PADDING-TOP: 8px
+<span id="line46"></span>}
+<span id="line47"></span>#button-yes {
+<span id="line48"></span>	PADDING-BOTTOM: 8px; MARGIN: 8px; PADDING-LEFT: 32px; PADDING-RIGHT: 32px; PADDING-TOP: 8px
+<span id="line49"></span>}
+<span id="line50"></span>#config {
+<span id="line51"></span>	BORDER-BOTTOM: #ccc 1px dashed; TEXT-ALIGN: center; BORDER-LEFT: #ccc 1px dashed; MARGIN: 8px; BORDER-TOP: #ccc 1px dashed; BORDER-RIGHT: #ccc 1px dashed
+<span id="line52"></span>}
+<span id="line53"></span>#text-n {
+<span id="line54"></span>	TEXT-ALIGN: center; WIDTH: 40px
+<span id="line55"></span>}
+<span id="line56"></span>#footer {
+<span id="line57"></span>	TEXT-ALIGN: center; MARGIN: 42px 0px 0px; FONT-SIZE: small
+<span id="line58"></span>}
+<span id="line59"></span></span><span>&lt;/<span class="end-tag">STYLE</span>&gt;</span><span>
+<span id="line60"></span>
+<span id="line61"></span></span><span>&lt;<span class="start-tag">SCRIPT</span> <span class="attribute-name">type</span>=<a class="attribute-value">text/javascript</a>&gt;</span><span>
+<span id="line62"></span>var nback = {
+<span id="line63"></span>	interval: 2000,
+<span id="line64"></span>	showTime: 1500,
+<span id="line65"></span>	nImage: 9,
+<span id="line66"></span>	nRound: 30,
+<span id="line67"></span>	n:2, // default value
+<span id="line68"></span>	timer:null,
+<span id="line69"></span>	queue:[],
+<span id="line70"></span>	answers:[],
+<span id="line71"></span>	current: null,
+<span id="line72"></span>	nRight:0,
+<span id="line73"></span>	nWrong:0,
+<span id="line74"></span>	
+<span id="line75"></span>	I_DONT_KNOW:0,
+<span id="line76"></span>	YES:1,
+<span id="line77"></span>	NO:2,
+<span id="line78"></span>	
+<span id="line79"></span>	start:function(){
+<span id="line80"></span>		var text = $("#text-n").val();
+<span id="line81"></span>		var i,j,rightCount=0;
+<span id="line82"></span>		if (Number(text)&gt;0) {
+<span id="line83"></span>			nback.n=Number(text);
+<span id="line84"></span>		}
+<span id="line85"></span>		if(nback.n&gt;10) {
+<span id="line86"></span>			nback.n=10;
+<span id="line87"></span>		}
+<span id="line88"></span>		nback.queue = [];
+<span id="line89"></span>		for( i=0; i</span><span>&lt;n</span><span>back.nRound+nback.n; ++i ) {
+<span id="line90"></span>			nback.queue.push( Math.ceil( Math.random()*nback.nImage ) );
+<span id="line91"></span>		}
+<span id="line92"></span>		for( i=nback.n; i</span><span>&lt;n</span><span>back.queue.length; ++i ) {
+<span id="line93"></span>			if(nback.queue[i] == nback.queue[i-nback.n])
+<span id="line94"></span>				++rightCount;
+<span id="line95"></span>		}
+<span id="line96"></span>		if (rightCount</span><span>&lt;1</span><span>0) {
+<span id="line97"></span>			for( i=rightCount; i</span><span>&lt;1</span><span>2; ++i ) {
+<span id="line98"></span>				j = Math.floor( Math.random() * nback.nRound );
+<span id="line99"></span>				if( nback.queue[j+nback.n] == nback.queue[j] ) {
+<span id="line100"></span>					--i;
+<span id="line101"></span>					continue;
+<span id="line102"></span>				} else {
+<span id="line103"></span>					nback.queue[j+nback.n] = nback.queue[j];
+<span id="line104"></span>				}
+<span id="line105"></span>			}
+<span id="line106"></span>		}
+<span id="line107"></span>		nback.answers = [];
+<span id="line108"></span>		for( i=0; i</span><span>&lt;n</span><span>back.queue.length; ++i ) {
+<span id="line109"></span>			nback.answers.push( nback.I_DONT_KNOW );
+<span id="line110"></span>		}
+<span id="line111"></span>		nback.current = 0;
+<span id="line112"></span>		nback.nRight = 0;
+<span id="line113"></span>		nback.nWrong = 0;
+<span id="line114"></span>		$("#notifier").text("");
+<span id="line115"></span>		$("#button-start").hide();
+<span id="line116"></span>		$("#config").hide();
+<span id="line117"></span>		$(".n-back-n").text(nback.n.toString());
+<span id="line118"></span>		if(nback.timer) {
+<span id="line119"></span>			window.clearInterval(nback.timer);
+<span id="line120"></span>		}
+<span id="line121"></span>		nback.showImage(nback.queue[nback.current]);
+<span id="line122"></span>		window.setTimeout(nback.look, nback.interval);
+<span id="line123"></span>		$("#instruction").text("Look CAREFULLY!");
+<span id="line124"></span>		nback.updateInfo();
+<span id="line125"></span>	},
+<span id="line126"></span>	
+<span id="line127"></span>	showImage:function(n) {
+<span id="line128"></span>		$("#img"+n).show();
+<span id="line129"></span>		window.setTimeout(function(){$("#img"+n).fadeOut();}, nback.showTime);
+<span id="line130"></span>	},
+<span id="line131"></span>	
+<span id="line132"></span>	look:function(){
+<span id="line133"></span>		if( nback.current+1</span><span>&lt;n</span><span>back.n ) {
+<span id="line134"></span>			++nback.current;
+<span id="line135"></span>		} else {
+<span id="line136"></span>			$("#instruction").text("Is this image the same one shown "+nback.n+" steps before?");
+<span id="line137"></span>			nback.timer = window.setInterval(nback.next, nback.interval);
+<span id="line138"></span>			$("#button-yes").show();
+<span id="line139"></span>			nback.next();
+<span id="line140"></span>			return;
+<span id="line141"></span>		}
+<span id="line142"></span>		nback.showImage(nback.queue[nback.current]);
+<span id="line143"></span>		window.setTimeout(nback.look, nback.interval);
+<span id="line144"></span>	},
+<span id="line145"></span>	
+<span id="line146"></span>	next:function(){
+<span id="line147"></span>		if(nback.current &gt;= nback.n &amp;&amp; nback.answers[nback.current] === nback.I_DONT_KNOW) {
+<span id="line148"></span>			nback.check(false);
+<span id="line149"></span>		}
+<span id="line150"></span>		if(nback.current+1 </span><span>&lt; </span><span>nback.queue.length) {
+<span id="line151"></span>			++nback.current;
+<span id="line152"></span>		} else {
+<span id="line153"></span>			window.setTimeout(nback.end, window.interval);
+<span id="line154"></span>			return;
+<span id="line155"></span>		}
+<span id="line156"></span>		nback.showImage(nback.queue[nback.current]);
+<span id="line157"></span>	},
+<span id="line158"></span>	
+<span id="line159"></span>	check:function(ans){
+<span id="line160"></span>		if( nback.answers[nback.current] != nback.I_DONT_KNOW ) {
+<span id="line161"></span>			return;
+<span id="line162"></span>		} else {
+<span id="line163"></span>			nback.answers[nback.current] = ans? nback.YES : nback.NO;
+<span id="line164"></span>			var eq = nback.queue[nback.current] === nback.queue[nback.current-nback.n];
+<span id="line165"></span>			if (ans) {
+<span id="line166"></span>				if (eq === ans) {
+<span id="line167"></span>					++nback.nRight;
+<span id="line168"></span>					nback.light("#0f0");
+<span id="line169"></span>				} else {
+<span id="line170"></span>					++nback.nWrong;
+<span id="line171"></span>					nback.light("red");
+<span id="line172"></span>				}
+<span id="line173"></span>			} else if( eq ) {
+<span id="line174"></span>				++nback.nWrong;
+<span id="line175"></span>				nback.light("red");
+<span id="line176"></span>			}
+<span id="line177"></span>			nback.updateInfo();
+<span id="line178"></span>		}
+<span id="line179"></span>	},
+<span id="line180"></span>	
+<span id="line181"></span>	light:function(color) {
+<span id="line182"></span>		$("#notifier").css("background",color).effect("explode", {}, 200);
+<span id="line183"></span>	},
+<span id="line184"></span>	
+<span id="line185"></span>	updateInfo:function(){
+<span id="line186"></span>		$("#n-right").text(nback.nRight.toString());
+<span id="line187"></span>		$("#n-wrong").text(nback.nWrong.toString());
+<span id="line188"></span>		var acc=nback.nRight+nback.nWrong == 0? 0 : (nback.nRight/(nback.nRight+nback.nWrong)*100);
+<span id="line189"></span>		$("#acc").text(acc.toFixed(2).toString());
+<span id="line190"></span>	},
+<span id="line191"></span>	
+<span id="line192"></span>	end:function(){
+<span id="line193"></span>		window.clearInterval(nback.timer);
+<span id="line194"></span>		nback.timer=null;
+<span id="line195"></span>		nback.queue=[];
+<span id="line196"></span>		nback.answers=[];
+<span id="line197"></span>		nback.current=0;
+<span id="line198"></span>		var acc=nback.nRight+nback.nWrong == 0? 0 : (nback.nRight/(nback.nRight+nback.nWrong)*100);
+<span id="line199"></span>		$("#notifier").removeAttr("style").html(
+<span id="line200"></span>			"</span><span>&lt;b</span><span>r/&gt;</span><span>&lt;b</span><span>&gt;You are playing "+nback.n+" back</span><span>&lt;/<span></span>b</span><span>&gt;</span><span>&lt;b</span><span>r/&gt;</span><span>&lt;b</span><span>r/&gt;"+
+<span id="line201"></span>			"Correct: "+nback.nRight+"</span><span>&lt;b</span><span>r/&gt;"+
+<span id="line202"></span>			"Incorrect: "+nback.nWrong+"</span><span>&lt;b</span><span>r/&gt;"+
+<span id="line203"></span>			"Accuracy: "+acc.toFixed(2)+"%"+
+<span id="line204"></span>			
+<span id="line205"></span>			(acc &gt;= 60 ? "</span><span>&lt;b</span><span>r/&gt;</span><span>&lt;b</span><span>r/&gt;</span><span>&lt;b</span><span>&gt;Well Done!</span><span>&lt;/<span></span>b</span><span>&gt;" : "")
+<span id="line206"></span>		);
+<span id="line207"></span>		$("#instruction").text("Game Over");
+<span id="line208"></span>		$("#button-yes").hide();
+<span id="line209"></span>		$("#config").show();
+<span id="line210"></span>		$("#button-start").show();
+<span id="line211"></span>	}
+<span id="line212"></span>}
+<span id="line213"></span>
+<span id="line214"></span>$(function(){
+<span id="line215"></span>	$("#button-start").click(nback.start);
+<span id="line216"></span>	$("#button-yes").click(function(){nback.check(true)});
+<span id="line217"></span>});
+<span id="line218"></span></span><span>&lt;/<span class="end-tag">SCRIPT</span>&gt;</span><span>
+<span id="line219"></span>
+<span id="line220"></span></span><span>&lt;<span class="start-tag">META</span> <span class="attribute-name">name</span>=<a class="attribute-value">GENERATOR</a> <span class="attribute-name">content</span>="<a class="attribute-value">MSHTML 9.00.8112.16440</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">HEAD</span>&gt;</span><span>
+<span id="line221"></span></span><span>&lt;<span class="start-tag">BODY</span>&gt;</span><span>
+<span id="line222"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">content</a>&gt;</span><span>
+<span id="line223"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">title</a>&gt;</span><span>
+<span id="line224"></span></span><span>&lt;<span class="start-tag">H1</span>&gt;</span><span>A Single N-Back Game</span><span>&lt;/<span class="end-tag">H1</span>&gt;</span><span>
+<span id="line225"></span></span><span>&lt;/<span class="end-tag">DIV</span>&gt;</span><span>
+<span id="line226"></span></span><span>&lt;<span class="start-tag">TABLE</span> <span class="attribute-name">id</span>=<a class="attribute-value">info</a>&gt;</span><span>
+<span id="line227"></span>  </span><span>&lt;<span class="start-tag">TBODY</span>&gt;</span><span>
+<span id="line228"></span>  </span><span>&lt;<span class="start-tag">TR</span>&gt;</span><span>
+<span id="line229"></span>    </span><span>&lt;<span class="start-tag">TD</span>&gt;</span><span>n=</span><span>&lt;<span class="start-tag">SPAN</span> <span class="attribute-name">class</span>=<a class="attribute-value">n-back-n</a>&gt;</span><span>1</span><span>&lt;/<span class="end-tag">SPAN</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TD</span>&gt;</span><span>
+<span id="line230"></span>    </span><span>&lt;<span class="start-tag">TD</span>&gt;</span><span>Right: </span><span>&lt;<span class="start-tag">SPAN</span> <span class="attribute-name">id</span>=<a class="attribute-value">n-right</a>&gt;</span><span>0</span><span>&lt;/<span class="end-tag">SPAN</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TD</span>&gt;</span><span>
+<span id="line231"></span>    </span><span>&lt;<span class="start-tag">TD</span>&gt;</span><span>Wrong: </span><span>&lt;<span class="start-tag">SPAN</span> <span class="attribute-name">id</span>=<a class="attribute-value">n-wrong</a>&gt;</span><span>0</span><span>&lt;/<span class="end-tag">SPAN</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TD</span>&gt;</span><span>
+<span id="line232"></span>    </span><span>&lt;<span class="start-tag">TD</span>&gt;</span><span>Accuracy: </span><span>&lt;<span class="start-tag">SPAN</span> <span class="attribute-name">id</span>=<a class="attribute-value">acc</a>&gt;</span><span>0.00</span><span>&lt;/<span class="end-tag">SPAN</span>&gt;</span><span>%</span><span>&lt;/<span class="end-tag">TD</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TR</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TBODY</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TABLE</span>&gt;</span><span>
+<span id="line233"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">game-field</a>&gt;</span><span>
+<span id="line234"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">notifier</a>&gt;</span><span> 
+<span id="line235"></span>  </span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">align</span>="<a class="attribute-value">center</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line236"></span></span><span>&lt;/<span class="end-tag">DIV</span>&gt;</span><span>
+<span id="line237"></span></span><span>&lt;<span class="start-tag">TABLE</span> <span class="attribute-name">cellSpacing</span>=<a class="attribute-value">0</a> <span class="attribute-name">cellPadding</span>=<a class="attribute-value">0</a>&gt;</span><span>
+<span id="line238"></span>  </span><span>&lt;<span class="start-tag">TBODY</span>&gt;</span><span>
+<span id="line239"></span>  </span><span>&lt;<span class="start-tag">TR</span>&gt;</span><span>
+<span id="line240"></span>    </span><span>&lt;<span class="start-tag">TD</span> <span class="attribute-name">style</span>="<a class="attribute-value">WIDTH: 256px; HEIGHT: 256px; VERTICAL-ALIGN: middle</a>" 
+<span id="line241"></span>      <span class="attribute-name">align</span>=<a class="attribute-value">center</a>&gt;</span><span></span><span>&lt;<span class="start-tag">IMG</span> <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img1</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/1.png">Single N-Back/1.png</a>"&gt;</span><span> 
+<span id="line242"></span>      </span><span>&lt;<span class="start-tag">IMG</span> <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img2</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/2.png">Single N-Back/2.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line243"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img3</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/3.png">Single N-Back/3.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line244"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img4</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/4.png">Single N-Back/4.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line245"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img5</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/5.png">Single N-Back/5.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line246"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img6</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/6.png">Single N-Back/6.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line247"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img7</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/7.png">Single N-Back/7.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line248"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img8</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/8.png">Single N-Back/8.png</a>"&gt;</span><span> </span><span>&lt;<span class="start-tag">IMG</span> 
+<span id="line249"></span>      <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">img9</a> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://systemicthinkingcourse.com/Single%20N-Back/9.png">Single N-Back/9.png</a>"&gt;</span><span> 
+<span id="line250"></span></span><span>&lt;/<span class="end-tag">TD</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TR</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TBODY</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">TABLE</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">DIV</span>&gt;</span><span>
+<span id="line251"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">instruction</a>&gt;</span><span>Hi, There </span><span>&lt;/<span class="end-tag">DIV</span>&gt;</span><span>
+<span id="line252"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">buttons</a>&gt;</span><span></span><span>&lt;<span class="start-tag">INPUT</span> <span class="attribute-name">id</span>=<a class="attribute-value">button-start</a> <span class="attribute-name">value</span>=<a class="attribute-value">Start!</a> <span class="attribute-name">type</span>=<a class="attribute-value">button</a>&gt;</span><span> </span><span>&lt;<span class="start-tag">INPUT</span> <span class="attribute-name">style</span>="<a class="attribute-value">DISPLAY: none</a>" <span class="attribute-name">id</span>=<a class="attribute-value">button-yes</a> <span class="attribute-name">value</span>=<a class="attribute-value">Yes!</a> <span class="attribute-name">type</span>=<a class="attribute-value">button</a>&gt;</span><span> </span><span>&lt;/<span class="end-tag">DIV</span>&gt;</span><span>
+<span id="line253"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">config</a>&gt;</span><span>config: n=</span><span>&lt;<span class="start-tag">INPUT</span> <span class="attribute-name">id</span>=<a class="attribute-value">text-n</a> <span class="attribute-name">value</span>=<a class="attribute-value">2</a>&gt;</span><span> </span><span>&lt;/<span class="end-tag">DIV</span>&gt;</span><span>
+<span id="line254"></span></span><span>&lt;<span class="start-tag">DIV</span> <span class="attribute-name">id</span>=<a class="attribute-value">footer</a>&gt;</span><span>
+<span id="line255"></span></span><span class="error" title="Stray end tag “a”.">&lt;/<span class="end-tag">A</span>&gt;</span><span></span><span class="error" title="Stray end tag “span”.">&lt;/<span class="end-tag">SPAN</span>&gt;</span><span></span><span class="error" title="No “p” element in scope but a “p” end tag seen.">&lt;/<span class="end-tag">P</span>&gt;</span><span>
+<span id="line256"></span>
+<span id="line257"></span></span></pre></body></html>
